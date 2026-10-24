@@ -1,9 +1,10 @@
 import uuid
 from datetime import UTC, datetime
 
-from models.totoise.user import User
 from tortoise import Model, fields
 from tortoise.contrib.pydantic import pydantic_model_creator
+
+from app.models.tortoise.user import User
 
 
 class Business(Model):

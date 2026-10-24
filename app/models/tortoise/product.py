@@ -1,9 +1,10 @@
 import uuid
 from datetime import UTC, datetime
 
-from models.totoise.business import Business
 from tortoise import Model, fields
 from tortoise.contrib.pydantic import pydantic_model_creator
+
+from app.models.tortoise.business import Business
 
 
 class Product(Model):

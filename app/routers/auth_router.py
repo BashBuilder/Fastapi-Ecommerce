@@ -5,6 +5,7 @@ from app.db.sqlalchemy_db import get_db
 from app.repository.sqlalchemy.user_repository import UserRepository
 from app.repository.tortoise.user_repository import TUserRepository
 from app.schemas import user_schema
+from app.services.auth_service import AuthService
 
 router = APIRouter(tags=["Auth"])
 
@@ -15,11 +16,16 @@ async def user_registration(
 ):
   # sqlalchemy
   user_repo = UserRepository(db)
-  test_user = user_repo.create_user(payload)
+  auth_service = AuthService(user_repo)
+  test_user = await auth_service.register_user(payload)
+
+  # test_user = user_repo.create_user(payload)
 
   # tortoise orm
   t_user_repo = TUserRepository()
-  test_user2 = await t_user_repo.create_user(payload)
+  auth_service2 = AuthService(t_user_repo)
+  test_user2 = await auth_service2.register_user(payload)
+  # test_user2 = await t_user_repo.create_user(payload)
 
   return {
     "status": "ok",

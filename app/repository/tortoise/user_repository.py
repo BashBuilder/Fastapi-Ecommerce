@@ -1,10 +1,10 @@
-from app.interfaces.user_repository import IUserRepository
+from app.interfaces.user_interface import IUserInterface
 from app.models.tortoise import user
 from app.schemas import user_schema
 from app.utils.auth import hash_password
 
 
-class TUserRepository(IUserRepository):
+class TUserRepository(IUserInterface):
   def __init__(self):
     pass
 

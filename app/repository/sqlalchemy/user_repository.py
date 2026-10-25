@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 
-from app.interfaces.user_repository import IUserRepository
+from app.interfaces.user_interface import IUserInterface
 from app.models.sqlalchemy import models
 from app.schemas import user_schema
 from app.utils.auth import hash_password
 
 
-class UserRepository(IUserRepository):
+class UserRepository(IUserInterface):
   def __init__(self, db: Session):
     self.db = db
 

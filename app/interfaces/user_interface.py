@@ -3,7 +3,7 @@ from abc import abstractmethod
 from app.schemas import user_schema
 
 
-class IUserRepository:
+class IUserInterface:
   @abstractmethod
   async def create_user(self, payload: user_schema.UserCreate) -> user_schema.UserOut:
     pass

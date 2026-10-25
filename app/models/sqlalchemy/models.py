@@ -17,6 +17,7 @@ class User(Base):
   join_date = Column(DateTime, default=datetime.now(UTC))
   created_at = Column(DateTime, default=datetime.now(UTC))
   updated_at = Column(DateTime, default=datetime.now(UTC))
+  businesses = relationship("Business", back_populates="owner")
 
 
 class Business(Base):
@@ -30,7 +31,8 @@ class Business(Base):
   owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
   created_at = Column(DateTime, default=datetime.now(UTC))
   updated_at = Column(DateTime, default=datetime.now(UTC))
-  owner = relationship("User", back_populates="business")
+  owner = relationship("User", back_populates="businesses")
+  products = relationship("Product", back_populates="business")
 
 
 class Product(Base):

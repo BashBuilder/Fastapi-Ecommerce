@@ -1,8 +1,13 @@
+# from typing import Annotated
+
+# from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
+
+# from app.db.sqlalchemy_db import Session
 
 DATABASE_USERNAME = settings.DATABASE_USERNAME
 DATABASE_PASSWORD = settings.DATABASE_PASSWORD
@@ -24,3 +29,6 @@ def get_db():
     yield db
   finally:
     db.close()
+
+
+# DbSession = Annotated[Session, Depends(get_db)]

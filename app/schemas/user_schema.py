@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -13,7 +14,7 @@ class UserCreate(UserBase):
 
 
 class UserOut(UserBase):
-  id: str
+  id: UUID
   join_date: datetime
   created_at: datetime
   updated_at: datetime

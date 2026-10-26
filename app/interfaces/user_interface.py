@@ -14,6 +14,12 @@ class IUserInterface:
     pass
 
   @abstractmethod
+  async def get_user_by_username_for_auth(
+    self, username: str
+  ) -> user_schema.UserAuth | None:
+    pass
+
+  @abstractmethod
   async def get_user_by_email(self, email: str) -> user_schema.UserOut | None:
     pass
 

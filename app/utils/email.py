@@ -26,7 +26,7 @@ async def send_verification_email(
     "exp": datetime.now(UTC) + timedelta(minutes=30),
   }
 
-  token = generate_token(TokenPayload.model_validate(token_data))
+  token = generate_token(TokenPayload.model_validate(token_data).model_dump())
 
   verification_url = f"http://localhost:8000/verify-email?token={token}"
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 import jwt
 from fastapi import HTTPException, status
 from pwdlib import PasswordHash
@@ -16,9 +18,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
   return password_hash.verify(plain_password, hashed_password)
 
 
-def generate_token(payload: user_schema.TokenPayload) -> str:
+def generate_token(payload: dict[str, Any]) -> str:
   return jwt.encode(
-    payload.model_dump(),
+    payload,
     settings.SECRET_KEY,
     algorithm=settings.ALGORITHM,
   )

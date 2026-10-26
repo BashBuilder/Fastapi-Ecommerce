@@ -35,6 +35,12 @@ class TUserRepository(IUserInterface):
     found_user = await user.User.get(id=id)
     return user_schema.UserOut.model_validate(found_user)
 
+  async def get_user_by_username_for_auth(
+    self, username: str
+  ) -> user_schema.UserAuth | None:
+    found_user = await user.User.get(username=username)
+    return user_schema.UserAuth.model_validate(found_user)
+
   async def get_user_by_email(self, email: str) -> user_schema.UserOut:
     found_user = await user.User.get(email=email)
     return user_schema.UserOut.model_validate(found_user)

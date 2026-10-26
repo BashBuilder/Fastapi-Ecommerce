@@ -55,6 +55,15 @@ class UserUpdate(UserBase):
   is_verified: bool | None = None
 
 
+class UserLogin(BaseModel):
+  username: str
+  password: str
+
+
+class UserAuth(UserOut):
+  password: str
+
+
 class TokenPayload(BaseModel):
   id: UUID | str
   # email: EmailStr

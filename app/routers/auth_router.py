@@ -1,16 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, status
 from sqlalchemy.orm import Session
 from starlette.responses import HTMLResponse
 
-from app.core.email_config import template
 from app.db.sqlalchemy_db import get_db
 from app.repository.tortoise.business_repository import TBusinessRepository
 from app.repository.tortoise.user_repository import TUserRepository
 from app.schemas import user_schema
-from app.schemas.email_schema import EmailSchema
 from app.services.auth_service import AuthService
-from app.utils.auth import verify_token
-from app.utils.email import send_verification_email
 
 router = APIRouter(tags=["Auth"])
 
@@ -31,7 +27,6 @@ async def user_registration(
   auth_service = AuthService(user_repo, business_repo)
   user_data = await auth_service.register_user(payload)
 
-  await send_verification_email(EmailSchema(email=[user_data.email]), user_data)
   return {"status": "ok", "data": "verification email sent to email", "user": user_data}
 
 
@@ -40,17 +35,7 @@ async def email_verification(
   request: Request, token: str = Query(...), db: Session = Depends(get_db)
 ):
   user_repo = TUserRepository()
-  # user_repo = UserRepository(db)
-  token_data = await verify_token(token)
-  user = await user_repo.get_user(token_data.id)
+  business_repo = TBusinessRepository()
 
-  if user and not user.is_verified:
-    user.is_verified = True
-    await user_repo.update_user(user.id, user_schema.UserUpdate.model_validate(user))
-    return template.TemplateResponse(
-      request=request, name="verification.html", context={"username": user.username}
-    )
-  else:
-    raise HTTPException(
-      status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token"
-    )
+  auth_service = AuthService(user_repo, business_repo)
+  return await auth_service.verify_email(token, request)

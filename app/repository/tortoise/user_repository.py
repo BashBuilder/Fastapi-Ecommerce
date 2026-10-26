@@ -31,7 +31,7 @@ class TUserRepository(IUserInterface):
 
     return user_schema.UserOut.model_validate(new_user)
 
-  async def get_user(self, id: UUID) -> user_schema.UserOut:
+  async def get_user(self, id: UUID | str) -> user_schema.UserOut:
     found_user = await user.User.get(id=id)
     return user_schema.UserOut.model_validate(found_user)
 
@@ -39,17 +39,37 @@ class TUserRepository(IUserInterface):
     found_user = await user.User.get(email=email)
     return user_schema.UserOut.model_validate(found_user)
 
-  async def update_user(
-    self, id: UUID, payload: user_schema.UserUpdate
-  ) -> user_schema.UserOut:
-    found_user = await user.User.get(id=id)
+  # async def update_user(
+  #   self, id: UUID | str, payload: user_schema.UserUpdate
+  # ) -> user_schema.UserOut:
+  #   found_user = await user.User.get(id=id)
 
-    if not found_user:
+  #   if not found_user:
+  #     raise HTTPException(
+  #       status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+  #     )
+
+  #   user_update = user.User(**payload.model_dump())
+  #   await user_update.save()
+
+  #   return user_schema.UserOut.model_validate(user_update)
+
+  async def update_user(
+    self, id: UUID | str, payload: user_schema.UserUpdate
+  ) -> user_schema.UserOut:
+    found_user = await user.User.get_or_none(id=id)
+
+    if found_user is None:
       raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="User not found",
       )
 
-    user_update = user.User(**payload.model_dump())
-    await user_update.save()
+    update_data = payload.model_dump(exclude_unset=True)
 
-    return user_schema.UserOut.model_validate(user_update)
+    for field, value in update_data.items():
+      setattr(found_user, field, value)
+
+    await found_user.save()
+
+    return user_schema.UserOut.model_validate(found_user)

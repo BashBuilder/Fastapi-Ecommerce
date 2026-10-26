@@ -42,7 +42,7 @@ class UserCreate(UserBase):
 
 class UserOut(UserBase):
   id: UUID
-  is_verified: bool
+  is_verified: bool | None = False
   join_date: datetime
   created_at: datetime
   updated_at: datetime
@@ -52,11 +52,11 @@ class UserOut(UserBase):
 
 
 class UserUpdate(UserBase):
-  is_verified: bool | None
+  is_verified: bool | None = None
 
 
 class TokenPayload(BaseModel):
-  id: UUID
+  id: UUID | str
   # email: EmailStr
   username: str
   purpose: str

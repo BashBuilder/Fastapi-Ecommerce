@@ -10,7 +10,7 @@ class User(Model):
   username = fields.CharField(max_length=255, null=False, unique=True)
   email = fields.CharField(max_length=255, null=False, unique=True)
   password = fields.CharField(max_length=255, null=False)
-  is_verified = fields.BooleanField(default=False)
+  is_verified = fields.BooleanField(default=False, null=True)
   join_date = fields.DateTimeField(default=datetime.now(UTC))
   created_at = fields.DateTimeField(default=datetime.now(UTC))
   updated_at = fields.DateTimeField(default=datetime.now(UTC))

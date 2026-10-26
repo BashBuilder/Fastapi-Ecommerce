@@ -53,3 +53,11 @@ class UserOut(UserBase):
 
 class UserUpdate(UserBase):
   is_verified: bool | None
+
+
+class TokenPayload(BaseModel):
+  id: UUID
+  # email: EmailStr
+  username: str
+  purpose: str
+  exp: datetime

@@ -10,7 +10,7 @@ class IUserInterface:
     pass
 
   @abstractmethod
-  async def get_user(self, id: int) -> user_schema.UserOut | None:
+  async def get_user(self, id: UUID) -> user_schema.UserOut | None:
     pass
 
   @abstractmethod

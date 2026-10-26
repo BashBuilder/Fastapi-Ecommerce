@@ -10,6 +10,7 @@ from pydantic import NameEmail
 from app.core.email_config import conf
 from app.schemas import user_schema
 from app.schemas.email_schema import EmailSchema
+from app.schemas.user_schema import TokenPayload
 from app.utils.auth import generate_token
 
 
@@ -25,7 +26,7 @@ async def send_verification_email(
     "exp": datetime.now(UTC) + timedelta(minutes=30),
   }
 
-  token = generate_token(token_data)
+  token = generate_token(TokenPayload.model_validate(token_data))
 
   verification_url = f"http://localhost:8000/verify-email?token={token}"
 

@@ -31,14 +31,8 @@ async def user_registration(
   auth_service = AuthService(user_repo, business_repo)
   user_data = await auth_service.register_user(payload)
 
-  # send verification email
   await send_verification_email(EmailSchema(email=[user_data.email]), user_data)
-
-  return {
-    "status": "ok",
-    "data": "verification email sent to email",
-    "user": user_data,
-  }
+  return {"status": "ok", "data": "verification email sent to email", "user": user_data}
 
 
 @router.get("/verify-email", response_class=HTMLResponse)
@@ -47,7 +41,8 @@ async def email_verification(
 ):
   user_repo = TUserRepository()
   # user_repo = UserRepository(db)
-  user = await verify_token(token)
+  token_data = await verify_token(token)
+  user = await user_repo.get_user(token_data.id)
 
   if user and not user.is_verified:
     user.is_verified = True

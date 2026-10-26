@@ -41,7 +41,7 @@ class UserRepository(IUserInterface):
 
     return user_schema.UserOut.model_validate(new_user)
 
-  async def get_user(self, id: int) -> user_schema.UserOut:
+  async def get_user(self, id: UUID) -> user_schema.UserOut:
     user = self.db.query(models.User).filter(models.User.id == id).first()
     return user_schema.UserOut.model_validate(user)
 

@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from uuid import UUID
 
 from app.schemas import user_schema
 
@@ -14,4 +15,10 @@ class IUserInterface:
 
   @abstractmethod
   async def get_user_by_email(self, email: str) -> user_schema.UserOut | None:
+    pass
+
+  @abstractmethod
+  async def update_user(
+    self, id: UUID, payload: user_schema.UserUpdate
+  ) -> user_schema.UserOut:
     pass

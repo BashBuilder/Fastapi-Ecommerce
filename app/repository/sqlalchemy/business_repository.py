@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.interfaces.business_interface import IBusinessInterface
@@ -15,6 +16,17 @@ class BusinessRepository(IBusinessInterface):
   ) -> business_schema.BusinessOut:
     business_info = payload.model_dump()
     new_business = models.Business(**business_info)
+
+    found_business = (
+      self.db.query(models.Business)
+      .filter(models.Business.name == business_info["name"])
+      .first()
+    )
+    if found_business:
+      raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST, detail="Business already exists"
+      )
+
     self.db.add(new_business)
     self.db.commit()
     self.db.refresh(new_business)

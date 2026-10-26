@@ -42,9 +42,14 @@ class UserCreate(UserBase):
 
 class UserOut(UserBase):
   id: UUID
+  is_verified: bool
   join_date: datetime
   created_at: datetime
   updated_at: datetime
 
   class Config:
     from_attributes = True
+
+
+class UserUpdate(UserBase):
+  is_verified: bool | None

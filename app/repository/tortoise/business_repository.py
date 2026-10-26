@@ -6,15 +6,23 @@ from app.schemas import business_schema
 
 
 class TBusinessRepository(IBusinessInterface):
-  def __init__(self, business_model: type[Business] = Business):
-    self.business_model = business_model
+  def __init__(
+    self,
+  ):
+    pass
 
   async def create_business(
     self,
     payload: business_schema.BusinessCreate,
   ) -> business_schema.BusinessOut:
+    found_business = await Business.get_or_none(name=payload.name)
 
-    business_obj = await self.business_model.create(**payload.model_dump())
+    if found_business:
+      raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST, detail="Business already exists"
+      )
+
+    business_obj = await Business.create(**payload.model_dump())
 
     return business_schema.BusinessOut.model_validate(business_obj)
 
@@ -23,7 +31,7 @@ class TBusinessRepository(IBusinessInterface):
     id: int,
   ) -> business_schema.BusinessOut:
 
-    business_obj = await self.business_model.get_or_none(id=id)
+    business_obj = await Business.get_or_none(id=id)
 
     if business_obj is None:
       raise HTTPException(

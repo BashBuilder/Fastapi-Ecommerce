@@ -10,12 +10,12 @@ from app.models.tortoise.business import Business
 class Product(Model):
   id = fields.UUIDField(pk=True, default=uuid.uuid4, index=True)
   name = fields.CharField(max_length=255, null=False, index=True)
-  category = fields.CharField(max_length=255, null=False, index=True)
-  original_price = fields.DecimalField(decimal_places=2, max_digits=10, null=False)
-  new_price = fields.DecimalField(decimal_places=2, max_digits=10)
-  percentage_discount = fields.DecimalField(decimal_places=2, max_digits=10)
-  offer_expiration_date = fields.DateField(default=datetime.now(UTC))
-  product_image = fields.CharField(max_length=255, null=False, default="default.png")
+  category = fields.CharField(max_length=255, null=True, index=True)
+  original_price = fields.DecimalField(decimal_places=2, max_digits=10, null=True)
+  new_price = fields.DecimalField(decimal_places=2, max_digits=10, null=True)
+  percentage_discount = fields.DecimalField(decimal_places=2, max_digits=10, null=True)
+  offer_expiration_date = fields.DateField(default=datetime.now(UTC), null=True)
+  product_image = fields.CharField(max_length=255, null=True, default="default.png")
   created_at = fields.DateTimeField(default=datetime.now(UTC))
   updated_at = fields.DateTimeField(default=datetime.now(UTC))
   business = fields.ForeignKeyField(

@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from starlette.responses import HTMLResponse
 
 from app.db.sqlalchemy_db import get_db
-from app.repository.tortoise.business_repository import TBusinessRepository
-from app.repository.tortoise.user_repository import TUserRepository
+from app.routers.repository.tortoise.business_repository import TBusinessRepository
+from app.routers.repository.tortoise.user_repository import TUserRepository
 from app.schemas import user_schema
 from app.services.auth_service import AuthService
 

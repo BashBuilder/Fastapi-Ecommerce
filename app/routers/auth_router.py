@@ -17,9 +17,9 @@ router = APIRouter(tags=["Auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
   auth_service = AuthService(TUserRepository(), TBusinessRepository())
-  return auth_service.get_user(token)
+  return await auth_service.get_user(token)
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
@@ -68,4 +68,4 @@ async def create_upload_file(
 ):
   authService = AuthService(TUserRepository(), TBusinessRepository())
 
-  return authService.upload_profile_image(user, file)
+  return await authService.upload_profile_image(user, file)

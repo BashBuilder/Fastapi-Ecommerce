@@ -102,6 +102,8 @@ class AuthService:
   async def upload_profile_image(
     self, user: user_schema.UserOut, file: Annotated[UploadFile, File(...)]
   ):
+    print(user)
+    print(file)
     current_business = await self.business_repo.get_business_by_owner_id(user.id)
     genrated_name = await create_upload_file(file)
 

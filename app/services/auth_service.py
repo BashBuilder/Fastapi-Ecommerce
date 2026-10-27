@@ -1,12 +1,14 @@
 from datetime import UTC, datetime, timedelta
+from typing import Annotated
 
-from fastapi import HTTPException, Request, status
+from fastapi import File, HTTPException, Request, UploadFile, status
 
 from app.core.email_config import template
 from app.interfaces.business_interface import IBusinessInterface
 from app.interfaces.user_interface import IUserInterface
 from app.schemas import business_schema, user_schema
 from app.schemas.email_schema import EmailSchema
+from app.services.image_service import create_upload_file
 from app.utils.auth import generate_token, verify_password, verify_token
 from app.utils.email import send_verification_email
 
@@ -96,3 +98,25 @@ class AuthService:
       )
 
     return user_schema.UserOut.model_validate(user)
+
+  async def upload_profile_image(
+    self, user: user_schema.UserOut, file: Annotated[UploadFile, File(...)]
+  ):
+    current_business = await self.business_repo.get_business_by_owner_id(user.id)
+    genrated_name = await create_upload_file(file)
+
+    if not current_business:
+      raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="You are not authorized to upload profile image",
+      )
+
+    current_business.logo = genrated_name
+    await self.business_repo.update_business(
+      current_business.id,
+      business_schema.BusinessUpdate(**current_business.model_dump()),
+    )
+
+    file_url = f"http://localhost:8000/{genrated_name}"
+
+    return {"profile_image": file_url}

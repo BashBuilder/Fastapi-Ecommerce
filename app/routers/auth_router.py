@@ -1,5 +1,7 @@
 # from authentication import *
-from fastapi import APIRouter, Depends, Query, Request, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, File, Query, Request, UploadFile, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette.responses import HTMLResponse
@@ -13,6 +15,11 @@ from app.services.auth_service import AuthService
 router = APIRouter(tags=["Auth"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+  auth_service = AuthService(TUserRepository(), TBusinessRepository())
+  return auth_service.get_user(token)
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
@@ -39,15 +46,26 @@ async def email_verification(
 @router.post("/login")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
   auth_service = AuthService(TUserRepository(), TBusinessRepository())
-  payload = {
-    "username": form_data.username,
-    "password": form_data.password,
-  }
-  return await auth_service.login(user_schema.UserLogin.model_validate(payload))
+  return await auth_service.login(
+    user_schema.UserLogin.model_validate(
+      {
+        "username": form_data.username,
+        "password": form_data.password,
+      }
+    )
+  )
 
 
 @router.get("/me")
-async def get_user(token: str = Depends(oauth2_scheme)):
-  auth_service = AuthService(TUserRepository(), TBusinessRepository())
+async def get_user(user: user_schema.UserOut = Depends(get_current_user)):
+  return user
 
-  return await auth_service.get_user(token)
+
+@router.post("/upload-profile-image")
+async def create_upload_file(
+  user: Annotated[user_schema.UserOut, Depends(get_current_user)],
+  file: Annotated[UploadFile, File(...)],
+):
+  authService = AuthService(TUserRepository(), TBusinessRepository())
+
+  return authService.upload_profile_image(user, file)

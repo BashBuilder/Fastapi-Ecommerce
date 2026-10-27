@@ -25,3 +25,7 @@ class BusinessOut(BusinessBase):
 
   class Config:
     from_attributes = True
+
+
+class BusinessUpdate(BusinessBase):
+  pass

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException, status
 
 from app.interfaces.business_interface import IBusinessInterface
@@ -37,5 +39,39 @@ class TBusinessRepository(IBusinessInterface):
       raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="Business not found"
       )
+
+    return business_schema.BusinessOut.model_validate(business_obj)
+
+  async def get_business_by_owner_id(
+    self,
+    id: UUID | str,
+  ) -> business_schema.BusinessOut:
+    business_obj = await Business.get_or_none(owner_id=id)
+
+    if business_obj is None:
+      raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Business not found"
+      )
+
+    return business_schema.BusinessOut.model_validate(business_obj)
+
+  async def update_business(
+    self,
+    id: UUID | str,
+    payload: business_schema.BusinessUpdate,
+  ) -> business_schema.BusinessOut:
+    business_obj = await Business.get_or_none(id=id)
+
+    if business_obj is None:
+      raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Business not found"
+      )
+
+    update_data = payload.model_dump(exclude_unset=True)
+
+    for field, value in update_data.items():
+      setattr(business_obj, field, value)
+
+    await business_obj.save()
 
     return business_schema.BusinessOut.model_validate(business_obj)
